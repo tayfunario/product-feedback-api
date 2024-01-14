@@ -125,6 +125,16 @@ app.post("/comment", async (req, res) => {
     }
 })
 
+app.post("/reply", async (req, res) => {
+    const { content, replyingTo, user_image, user_name, nick_name, comment_id } = req.body;
+    try {
+        const newReply = await db.one('INSERT INTO replies VALUES ($1, $2, $3, $4, $5, $6)', [content, replyingTo, user_image, user_name, nick_name, comment_id]);
+        res.status(201).json({ message: "Reply created successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "An error occured." })
+    }
+})
+
 app.patch("/suggestions/edit", async (req, res) => {
     const { id, title, category, status, description } = req.body;
     try {
