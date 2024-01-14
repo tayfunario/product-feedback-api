@@ -115,6 +115,16 @@ app.post("/suggestions", async (req, res) => {
     }
 })
 
+app.post("/comment", async (req, res) => {
+    const { content, user_image, user_name, nick_name, request_id } = req.body;
+    try {
+        const newComment = await db.one('INSERT INTO comments (content, user_image, user_name, nick_name, request_id) VALUES ($1, $2, $3, $4, $5)', [content, user_image, user_name, nick_name, request_id]);
+        res.status(201).json({ message: "Comment created successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "An error occured." })
+    }
+})
+
 app.patch("/suggestions/edit", async (req, res) => {
     const { id, title, category, status, description } = req.body;
     try {
