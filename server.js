@@ -97,7 +97,7 @@ app.get('/roadmap', async (req, res) => {
 
         res.status(200).json(newArr);
     } catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ message: "An error occured" })
     }
 })
 
@@ -134,7 +134,7 @@ app.post("/comment", async (req, res) => {
         const newComment = await itemsPool.query('INSERT INTO comments (content, user_image, user_name, nick_name, request_id) VALUES ($1, $2, $3, $4, $5)', [content, user_image, user_name, nick_name, request_id]);
         res.status(201).json({ message: "Comment created successfully" });
     } catch (error) {
-        res.status(500).json({ message: "An error occured." })
+        res.status(500).json({ message: error.message })
     }
 })
 
@@ -152,7 +152,7 @@ app.patch("/suggestions/edit", async (req, res) => {
     const { id, title, category, status, description } = req.body;
     try {
         const suggestion = await itemsPool.query('UPDATE requests SET title = $1, description = $2, category = $3, status = $4 WHERE id = $5', [title, description, category, status, id]);
-        res.status(200).json({ message: "Suggestion updated successfully", suggestion });
+        res.status(200).json({ message: "Suggestion updated successfully" });
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
     }
@@ -161,7 +161,7 @@ app.patch("/suggestions/edit", async (req, res) => {
 app.delete("/suggestions/delete", async (req, res) => {
     const { id } = req.body;
     try {
-        const suggestion = await itemsPool.query('DELETE FROM requests WHERE id = $1', id);
+        const suggestion = await itemsPool.query('DELETE FROM requests WHERE id = $1', [id]);
         res.status(200).json({ message: "Suggestion deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
