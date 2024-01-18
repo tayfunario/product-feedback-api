@@ -65,7 +65,7 @@ app.get('/suggestions/:id', async (req, res) => {
 
 app.get('/suggestions/:id/edit', async (req, res) => {
     try {
-        const suggestion = await itemsPool.query('SELECT * FROM requests WHERE id = $1 AND status = $2', [req.params.id, 'suggestion']);
+        const suggestion = await (await itemsPool.query('SELECT * FROM requests WHERE id = $1 AND status = $2', [req.params.id, 'suggestion'])).rows[0];
         res.status(200).json(suggestion);
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
