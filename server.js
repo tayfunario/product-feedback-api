@@ -12,10 +12,8 @@ app.listen(process.env.PORT, () => { console.log(`Server is running on port ${pr
 
 app.get('/suggestions', async (req, res) => {
     try {
-        let data = await itemsPool.query("SELECT * FROM requests WHERE status = 'suggestion'");
+        const data = (await itemsPool.query("SELECT * FROM requests WHERE status = 'suggestion'")).rows
         const newArr = []
-
-        data = data.rows
 
         for (suggestion of data) {
             let numOfComments = 0
@@ -74,7 +72,7 @@ app.get('/suggestions/:id/edit', async (req, res) => {
 
 app.get('/roadmap', async (req, res) => {
     try {
-        const data = await itemsPool.query("SELECT * FROM requests WHERE status != 'suggestion'");
+        const data = (await itemsPool.query("SELECT * FROM requests WHERE status != 'suggestion'")).rows
 
         const newArr = []
 
@@ -82,13 +80,16 @@ app.get('/roadmap', async (req, res) => {
             let numOfComments = 0
             let numOfReplies = 0
 
-            const commentCount = await itemsPool.query('SELECT COUNT(*) FROM comments WHERE request_id = $1', suggestion.id)
+            const commentCount = (await itemsPool.query('SELECT COUNT(*) FROM comments WHERE request_id = $1', [suggestion.id])).rows[0]
             numOfComments = Number(commentCount.count);
 
-            const comments = await itemsPool.query('SELECT * FROM comments WHERE request_id = $1', suggestion.id);
-            if (comments.length) {
-                const replies = await itemsPool.query('SELECT COUNT(*) FROM replies WHERE comment_id IN ($1:csv)', [comments.map(comment => comment.id)]);
-                numOfReplies = Number(replies.count);
+            const comments = await itemsPool.query('SELECT * FROM comments WHERE request_id = $1', [suggestion.id]);
+            if (comments.rows.length) {
+                const placeholders = comments.rows.map((elem, index) => `$${index + 1}`).join(', ');
+
+                const replies = await itemsPool.query(`SELECT COUNT(*) FROM replies WHERE comment_id IN (${placeholders})`, comments.rows.map(comment => comment.id));
+
+                numOfReplies = Number(replies.rows[0].count);
             }
 
             newArr.push({ ...suggestion, totalCommentReplyNum: numOfComments + numOfReplies })
@@ -96,7 +97,7 @@ app.get('/roadmap', async (req, res) => {
 
         res.status(200).json(newArr);
     } catch (error) {
-        res.status(500).json({ message: "An error occured." })
+        res.status(500).json({ message: error.message })
     }
 })
 
