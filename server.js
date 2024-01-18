@@ -103,16 +103,18 @@ app.get('/roadmap', async (req, res) => {
 
 app.get('/roadmap/:id', async (req, res) => {
     try {
-        const suggestion = await itemsPool.query("SELECT * FROM requests WHERE id = $1 AND status != $2", [req.params.id, 'suggestion']);
+        const suggestion = (await itemsPool.query("SELECT * FROM requests WHERE id = $1 AND status != $2", [req.params.id, 'suggestion'])).rows[0]
 
-        const comments = await itemsPool.query('SELECT * FROM comments WHERE request_id = $1', req.params.id);
+        const comments = (await itemsPool.query('SELECT * FROM comments WHERE request_id = $1', [req.params.id])).rows
+
         const comment_ids = comments.map(comment => comment.id);
         if (!comment_ids.length) return res.status(200).json({ suggestion, comments: [], replies: [] });
 
-        const replies = await itemsPool.query('SELECT * FROM replies WHERE comment_id IN ($1:csv)', [comment_ids]);
+        const replies = (await itemsPool.query(`SELECT * FROM replies WHERE comment_id IN (${comment_ids.join(',')})`)).rows
+
         res.status(200).json({ suggestion, comments, replies });
     } catch (error) {
-        res.status(404).json({ message: "An error occured" })
+        res.status(404).json({ message: error.message })
     }
 })
 
