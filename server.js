@@ -27,4 +27,4 @@ app.post("/reply", feedbackController.postReply)
 
 app.patch("/suggestions/edit", feedbackController.updateSuggestion)
 
-app.delete("/suggestions/delete", dfeedbackController.eleteSuggestion)
+app.delete("/suggestions/delete", feedbackController.deleteSuggestion)
