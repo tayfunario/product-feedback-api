@@ -3,7 +3,7 @@ const model = require("../models/model")
 ////////
 const getAllFeedbacks = async (req, res) => {
     try {
-        res.status(200).json(await model.getAllItemsWithNumOfCommentsReplies(false));
+        res.status(200).json(model.GetData.getAllItemsWithNumOfCommentsReplies(false));
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
     }
@@ -12,7 +12,7 @@ const getAllFeedbacks = async (req, res) => {
 ///////
 const getCertainFeedback = async (req, res) => {
     try {
-        res.status(200).json(await model.getCertainItem(false, req.params.id));
+        res.status(200).json(model.GetData.getCertainItem(false, req.params.id));
     } catch (error) {
         console.log(error)
         res.status(404).json({ message: error.message })
@@ -22,7 +22,7 @@ const getCertainFeedback = async (req, res) => {
 ///////
 const getCertainFeedbackForEdit = async (req, res) => {
     try {
-        res.status(200).json(await model.getCertainItemWithoutComments(req.params.id));
+        res.status(200).json(model.GetData.getCertainItem(false, req.params.id));
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
     }
@@ -31,7 +31,7 @@ const getCertainFeedbackForEdit = async (req, res) => {
 ///////
 const getAllRoadmapFeedbacks = async (req, res) => {
     try {
-        res.status(200).json(await model.getAllItemsWithNumOfCommentsReplies(true))
+        res.status(200).json(model.GetData.getAllItemsWithNumOfCommentsReplies(true))
     } catch (error) {
         res.status(500).json({ message: "An error occured" })
     }
@@ -40,7 +40,7 @@ const getAllRoadmapFeedbacks = async (req, res) => {
 ////////
 const getCertainRoadmapFeedback = async (req, res) => {
     try {
-        res.status(200).json(await model.getCertainItem(true, req.params.id));
+        res.status(200).json(model.GetData.getCertainItem(true, req.params.id));
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
@@ -49,7 +49,7 @@ const getCertainRoadmapFeedback = async (req, res) => {
 ///////
 const postSuggestion = async (req, res) => {
     try {
-        await model.postEntity('requests', req.body);
+        model.SetData.postEntity('requests', req.body);
         res.status(201).json({ message: "Suggestion created successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -59,7 +59,7 @@ const postSuggestion = async (req, res) => {
 ///////
 const postComment = async (req, res) => {
     try {
-        await model.postEntity('comments', req.body);
+        model.SetData.postEntity('comments', req.body);
         res.status(201).json({ message: "Comment created successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -69,7 +69,7 @@ const postComment = async (req, res) => {
 ///////
 const postReply = async (req, res) => {
     try {
-        await model.postEntity('replies', req.body);
+        model.SetData.postEntity('replies', req.body);
         res.status(201).json({ message: "Reply created successfully" });
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
@@ -79,7 +79,7 @@ const postReply = async (req, res) => {
 ///////
 const updateSuggestion = async (req, res) => {
     try {
-        await model.updateEntity(req.body);
+        model.SetData.updateEntity(req.body)
         res.status(200).json({ message: "Suggestion updated successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -89,7 +89,7 @@ const updateSuggestion = async (req, res) => {
 
 const deleteSuggestion = async (req, res) => {
     try {
-        await model.deleteEntity(req.body.id);
+        model.SetData.deleteEntity(req.body.id);
         res.status(200).json({ message: "Suggestion deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "An error occured." })
